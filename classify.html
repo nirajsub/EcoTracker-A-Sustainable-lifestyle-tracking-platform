@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Upload Image</title>
+</head>
+<body>
+    <h1>Image Classification</h1>
+    <input type="file" id="image-input">
+    <button onclick="classifyImage()">Classify</button>
+
+    <div id="result-container" style="display: none;">
+        <h2 id="predicted-label"></h2>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+        function classifyImage() {
+            var imageInput = document.getElementById('image-input');
+            var imageFile = imageInput.files[0];
+
+            var formData = new FormData();
+            formData.append('image', imageFile);
+
+            $.ajax({
+                url: 'http://127.0.0.1:8000/api/classify-image/',  // Replace with your backend endpoint URL
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function(response) {
+                    var predictedLabel = response.predicted_label;
+                    var resultContainer = document.getElementById('result-container');
+                    var predictedLabelElement = document.getElementById('predicted-label');
+
+                    predictedLabelElement.textContent = 'Predicted Label: ' + predictedLabel;
+                    resultContainer.style.display = 'block';
+                },
+                error: function() {
+                    alert('Error occurred during image classification.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>

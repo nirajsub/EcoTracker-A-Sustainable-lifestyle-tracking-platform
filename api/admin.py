@@ -39,3 +39,5 @@ class LikeAdmin(admin.ModelAdmin):
 @admin.register(Hashtag)
 class HashtagAdmin(admin.ModelAdmin):
     list_display = ('name', 'activity_post')
+
+admin.site.register(ImageClassification)

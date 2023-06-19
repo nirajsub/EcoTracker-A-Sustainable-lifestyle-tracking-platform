@@ -15,7 +15,6 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = 'django-insecure-y-(0mwnfssbg!d6jurhk#=v+4%o)4d))6q!3q^5uae9r^6ox8#'
-
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -97,5 +96,7 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

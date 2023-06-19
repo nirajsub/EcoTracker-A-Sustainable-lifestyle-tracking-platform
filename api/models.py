@@ -79,7 +79,6 @@ class Hashtag(models.Model):
     def __str__(self):
         return self.name
 
-
 class Event(models.Model):
     organizer = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
@@ -92,7 +91,6 @@ class Event(models.Model):
     def __str__(self):
         return self.name
 
-
 class EventContribution(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='contributions')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -100,7 +98,6 @@ class EventContribution(models.Model):
 
     def __str__(self):
         return f'Contribution by {self.user.username} to {self.event.name}'
-
 
 class EventPost(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='posts')
@@ -111,7 +108,6 @@ class EventPost(models.Model):
     def __str__(self):
         return f'Post by {self.user.username} on {self.event.name}'
 
-
 class EventParticipant(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='event_participants')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -120,3 +116,18 @@ class EventParticipant(models.Model):
     def __str__(self):
         return f'{self.user.username} joined {self.event.name}'
 
+class ClassifyItem(models.Model):
+    name = models.CharField(max_length=255)
+    image = models.ImageField(upload_to='item_images')
+    category = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+class ImageClassification(models.Model):
+    image = models.ImageField(upload_to='image_classification')
+    predicted_labels = models.CharField(max_length=255, blank=True, null=True)
+    saved = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
