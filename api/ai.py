@@ -23,18 +23,33 @@
 #     return predicted_label
 # 1024f3c9ba6545b0bd868f54f7952504
 
-from clarifai import rest
-from clarifai.rest import ClarifaiApp
-from clarifai.grpc.api import service_pb2_grpc, service_pb2
-from clarifai.rest import Image as ClImage, ClarifaiApp
+from clarifai_grpc.channel.clarifai_channel import ClarifaiChannel
+from clarifai_grpc.grpc.api import service_pb2_grpc, service_pb2
+from clarifai_grpc.grpc.api.status import status_code_pb2
 
-app = ClarifaiApp(api_key='1024f3c9ba6545b0bd868f54f7952504')
+YOUR_CLARIFAI_API_KEY = "1024f3c9ba6545b0bd868f54f7952504"
+YOUR_MODEL_ID = "my-first-application-00l6ao"
 
-def classify_image(image_path):
-    image = ClImage(file_obj=open(image_path, 'rb'))
-    model = app.public_models.general_model
-    response = model.predict([image])
-    predictions = response['outputs'][0]['data']['concepts']
-    predicted_labels = [prediction['name'] for prediction in predictions]
+def classify_image(image_url):
+    channel = ClarifaiChannel.get_grpc_channel()
+    stub = service_pb2_grpc.V2Stub(channel)
+
+    request = service_pb2.PostModelOutputsRequest(
+        model_id=YOUR_MODEL_ID,
+        inputs=[
+            service_pb2.Input(data=service_pb2.Data(image=service_pb2.Image(url=image_url)))
+        ],
+    )
+
+    metadata = (("authorization", f"Key {YOUR_CLARIFAI_API_KEY}"),)
+    response = stub.PostModelOutputs(request, metadata=metadata)
+
+    if response.status.code != status_code_pb2.SUCCESS:
+        print(response)
+        raise Exception(f"Request failed, status code: {response.status}")
+
+    predicted_labels = [
+        concept.name for concept in response.outputs[0].data.concepts
+    ]
 
     return predicted_labels

@@ -21,17 +21,15 @@ class classify_image_view(APIView):
         img = ImageClassification.objects.get(saved=False)
         serializer = ImageClassificationSerializer(img, many=False).data
         return Response(serializer, status=status.HTTP_200_OK)
-    def post(self, request, *args, **kwargs):
-        if request.method == 'POST':
+    def put(self, request, *args, **kwargs):
+        if request.method == 'PUT':
             image_obj = ImageClassification.objects.get(saved=False)
             image_file = image_obj.image
-
             if image_file:
                 predicted_labels = classify_image(image_file.path)
-                serializer = ImageClassificationSerializer(data={
-                    'image': image_file,
+                serializer = ImageClassificationSerializer(instance=image_obj, data={
                     'predicted_labels': predicted_labels
-                })
+                }, partial=True)
                 if serializer.is_valid():
                     serializer.save()
                     return JsonResponse(serializer.data, status=201)
