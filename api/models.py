@@ -116,6 +116,7 @@ class EventParticipant(models.Model):
     def __str__(self):
         return f'{self.user.username} joined {self.event.name}'
 
+
 class ClassifyItem(models.Model):
     name = models.CharField(max_length=255)
     image = models.ImageField(upload_to='item_images')
