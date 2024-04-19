@@ -132,3 +132,5 @@ class ImageClassification(models.Model):
     predicted_labels = models.CharField(max_length=255, blank=True, null=True)
     saved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+
+

@@ -9,22 +9,42 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
+SHARED_APPS = (
+    'django_tenants',
+    'account',
+
     'django.contrib.contenttypes',
+    'django.contrib.auth',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.messages',
+    'django.contrib.admin',
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',
-    'drf_yasg',
-    
     'api',
-    'account',
-]
+    'sweet_shared'
+)
+
+TENANT_APPS = (
+    'django.contrib.contenttypes',
+    'django.contrib.auth',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.admin',
+    'django.contrib.staticfiles',
+    'sweet_tenant'
+)
+
+INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
+
+TENANT_MODEL = "account.Client" # app.Model
+
+TENANT_DOMAIN_MODEL = "account.Domain"  # app.Model
 
 MIDDLEWARE = [
+    'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -35,6 +55,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'EcoTracker.urls'
+PUBLIC_SCHEMA_URLCONF = 'EcoTracker.urls_public'
 
 TEMPLATES = [
     {
@@ -52,6 +73,7 @@ TEMPLATES = [
     },
 ]
 
+
 WSGI_APPLICATION = 'EcoTracker.wsgi.application'
 
 # DATABASES = {
@@ -62,12 +84,15 @@ WSGI_APPLICATION = 'EcoTracker.wsgi.application'
 # }
 DATABASES = {
     'default' : {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME' : 'ecotracker',
-        'USER' : 'admin',
-        'PASSWORD': 'admin',
+        'ENGINE': 'django_tenants.postgresql_backend',
+        'NAME' : 'dtdemo',
+        'USER' : 'demo',
+        'PASSWORD': 'demo',
     }
 }
+DATABASE_ROUTERS = (
+    'django_tenants.routers.TenantSyncRouter',
+)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -99,3 +124,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SHOW_PUBLIC_IF_NO_TENANT_FOUND = True

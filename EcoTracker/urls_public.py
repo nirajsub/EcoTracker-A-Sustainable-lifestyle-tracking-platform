@@ -16,7 +16,7 @@ from rest_framework import permissions
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include('api.urls')),
-    path('account/', include('account.urls')),
+    path('', include('account.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path('auth', include("django.contrib.auth.urls")),
    #  path('', schema_view.with_ui('swagger', cache_timeout=0)),
